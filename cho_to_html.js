@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 
 #use strict;		# doesn't work with file upload
 use CGI;
