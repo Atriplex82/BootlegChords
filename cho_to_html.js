@@ -1,4 +1,5 @@
 let q,infile,chopro,uplinfo,output,i;
+\\read file 
 document.querySelector("#read-button").addEventListener('click', function() {
 		let file = document.querySelector("#file-input").files[0];
 		let reader = new FileReader();
@@ -19,12 +20,12 @@ document.querySelector("#read-button").addEventListener('click', function() {
 
 function chopro2html(f)
 
-{
+{	//read title
 	let title 
 
-	f = f.replace(/</ , "&lt;"); // replace < with &lt;
-	f = f.replace(/>/ , "&gt;"); // replace > with &gt;
-	f = f.replace(/&/ , "&amp;"); //replace & with &amp;
+	f = f.replace(/</ , "&lt;"); 	 // replace < with &lt;
+	f = f.replace(/>/ , "&gt;"); 	 // replace > with &gt;
+	f = f.replace(/&/ , "&amp;");	 //replace & with &amp;
 
 	if (f.match(/{title:.*}/gi) != null){
                 title = String(f.match(/{title:.*}/gi));
