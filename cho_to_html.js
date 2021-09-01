@@ -1,70 +1,54 @@
-#!/usr/bin/perl
+let q,infile,chopro,uplinfo,output,i;
+document.querySelector("#read-button").addEventListener('click', function() {
+		let file = document.querySelector("#file-input").files[0];
+		let reader = new FileReader();
+		reader.addEventListener('load', function(e) {
+	    		let text = e.target.result;
+                        //document.body.insertAdjacentHTML("beforeend",text);
+		        document.body.insertAdjacentHTML("beforeend",chopro2html(text));
+	    		//document.querySelector("#file-contents").textContent = text;
+			
+		});
+                
+                reader.readAsText(file);
 
-#use strict;		# doesn't work with file upload
-use CGI;
 
-my($q,$infile,$chopro,$uplinfo,$output,$i);
 
-$q = new CGI;		# query	parameters
-print $q->header();
 
-open(LOG,'>>/var/log/webchord.log') || die "Cannot open log: $!";
+	});
 
-print LOG "---\n" . localtime()	. ": from host $ENV{'REMOTE_HOST'}\n";
+function chopro2html(f)
 
-$infile	= $q->param('chordpro');
-unless(defined($infile)) {
-	bailout("No chordpro parameter");
-}
+{
+	let title 
 
-$uplinfo = $q->uploadInfo($infile);
-if(defined($uplinfo)) {		# this is an uploaded file
-	print LOG "Upload: file	name=$infile\n";
-	while ($bytesread=read($infile,$buffer,1024)) {
-		$chopro	.= $buffer;
+	f = f.replace(/</ , "&lt;"); // replace < with &lt;
+	f = f.replace(/>/ , "&gt;"); // replace > with &gt;
+	f = f.replace(/&/ , "&amp;"); //replace & with &amp;
+
+	if (f.match(/{title:.*}/gi) != null){
+                title = String(f.match(/{title:.*}/gi));
+		f = f.replace(/{title:.*}/gi," ");
+		title = title.replace(/^{title:/gi,"");
+		title = title.replace(/}$/,"");
 	}
-	close $infile || print LOG "close failed: $!\n";
-} else {
-	# the chopro parameter was not a file (entered in text box)
-	print LOG "Text	box used.\n";
-	$chopro	= $infile;
-}
 
-#print LOG "Chopro input: $chopro\n";
+	else if (f.match(/{t:.*}/gi) != null) {
 
-chopro2html($chopro);
-
-print $q->end_html();
-exit;
-
-sub bailout
-{
-	my($msg) = @_;
-	print LOG $msg."\n";
-	print "<HTML><HEAD><TITLE>Web Chord: Error</TITLE></HEAD>" .
-		"<BODY><H1>Error</H1><P>\n$msg\n</P>" .
-		"</BODY></HTML>";
-	exit;
-}
-
-sub chopro2html
-# outputs the HTML code of
-# the chordpro file in the first parameter
-{
-	my($chopro) = @_;
-
-	$chopro	=~ s/\</\&lt;/g; # replace < with &lt;
-	$chopro	=~ s/\>/\&gt;/g; # replace > with &gt;
-	$chopro	=~ s/\&/\&amp;/g; # replace & with &amp;
-
-	my($title);
-	if(($chopro =~ /^{title:(.*)}/mi) || ($chopro =~ /^{t:(.*)}/mi)) {
-		# title	found
-		$title = $1;
+		title = String(f.match(/{t:.*}/gi));
+		f = f.replace(/{t:.*}/gi," ");
+		title = title.replace(/^{t:/gi,"");
+		title = title.replace(/}$/,"");
 	} else {
-		# no title found
-		$title = "ChordPro song";
+		// no title found
+		title = "Unnamed Song";
 	}
+document.body.insertAdjacentHTML("beforeend",f);
+        return title;
+}
+
+
+/*
 	print <<_END_;
 <HTML><HEAD><TITLE>$title</TITLE>
 <STYLE TYPE="text/css"><!--
@@ -162,4 +146,6 @@ _END_
 			}
 		}
 	}	#while
-}
+} 
+
+*/
