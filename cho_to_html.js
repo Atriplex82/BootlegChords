@@ -1,5 +1,5 @@
 let q,infile,chopro,uplinfo,output,i;
-\\read file 
+//read file 
 document.querySelector("#read-button").addEventListener('click', function() {
 		let file = document.querySelector("#file-input").files[0];
 		let reader = new FileReader();
