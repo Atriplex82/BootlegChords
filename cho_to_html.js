@@ -47,30 +47,31 @@ function chopro2html(f){
 		song_title = "Unnamed Song";
 	}
 	*/
-let Command = /{(.*)}/;
+
 while( f != '') {
 
-	f = f.replace(/^.*\n?/,"");   // extract and remove first line
+	f = f.replace(/^(.*)\n?/,"");   // extract and remove first line
 
-	if(f.match(/#.*/)) {                                 // a line starting with # is a comment
+	if(RegExp.$1.match(/#.*/)) {                                 // a line starting with # is a comment
 
-		f = f.replace(/^#(.*)/,"<!-- $1 -->\n");         //insert as HTML comment
+		f = RegExp.$1.replace(/^#(.*)/,"<!-- RegExp.lastParen -->\n");         //insert as HTML comment
 	}
-    
+    let Command = /{(.*)}/;
 		if (Command.test(f)){
 
 			
-	  	if( RegExp.$1.match(/^t:(.*)/)  || RegExp.$1.match(/^title:(.*)/i)  ) {  
-			  document.querySelector("#song_title").textContent = RegExp.lastParen;     
+	  	if( RegExp.lastParen.match(/^t:(.*)/i)  || RegExp.lastParen.match(/^title:(.*)/i)  ) {  
+			   document.querySelector("#song_title").textContent = RegExp.lastParen; 
+				 document.querySelector("#html_title").textContent = RegExp.lastParen;    
 			
 			}
-			else if (RegExp.$1.match(/^subtitle:(.*)/i) || RegExp.$1.match(/^st:(.*)/i)){
+			else if (RegExp.lastParen.match(/^subtitle:(.*)/i) || RegExp.lastParen.match(/^st:(.*)/i)){
 				document.querySelector("#subtitle").textContent = RegExp.lastParen;
 			}
 
 		}
 
-	document.querySelector("#file-contents").textContent = f;
+	//document.querySelector("#file-contents").textContent = f;
 
 
 
