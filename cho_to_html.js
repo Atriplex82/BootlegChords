@@ -1,85 +1,154 @@
-let q,infile,uplinfo,output;
-//read file 
-document.querySelector("#read-button").addEventListener('click', function() {
-	let file = document.querySelector("#file-input").files[0];
-	let reader = new FileReader();
-	reader.addEventListener('load', function(e) {
-		let text = e.target.result;
-		chopro2html(text);
+//read file
+document.querySelector("#read-button").addEventListener("click", function () {
+  let file = document.querySelector("#file-input").files[0];
+  let reader = new FileReader();
+  reader.addEventListener("load", function (e) {
+    let text = e.target.result;
+    chopro2html(text);
+    //document.querySelector("#test").textContent = String(text);
+    //document.body.insertAdjacentHTML("beforeend",text);
+  });
 
-  	//document.body.insertAdjacentHTML("beforeend",text);
- 	  //document.body.insertAdjacentHTML("beforeend",chopro2html(text));
-		//document.querySelector("#file-contents").textContent = text;
-			
-	});
-    
-	reader.readAsText(file);
-
-
-
-
+  reader.readAsText(file);
 });
 
-function chopro2html(f){
+function chopro2html(f) {
+  //read title
+  //let song_title
 
-	//read title
-	//let song_title 
+  f = f.replace(/</, "&lt;"); // replace < with &lt;
+  f = f.replace(/>/, "&gt;"); // replace > with &gt;
+  f = f.replace(/&/, "&amp;"); //replace & with &amp;
 
-	f = f.replace(/</ , "&lt;"); 	 // replace < with &lt;
-	f = f.replace(/>/ , "&gt;"); 	 // replace > with &gt;
-	f = f.replace(/&/ , "&amp;");	 //replace & with &amp;
-/*
-	if (f.match(/{title:.*}/gi) != null){
-                song_title = String(f.match(/{title:.*}/gi));
-		f = f.replace(/{title:.*}/gi,"");
-		song_title = song_title.replace(/^{title:/gi,"");
-		song_title = song_title.replace(/}$/,"");
-	}
+  let i,
+    mode = 0;
 
-	else if (f.match(/{t:.*}/gi) != null) {
+  while (f != "") {
+    f = f.replace(/^(.*)\n?/, ""); // extract and remove first line
+    i = RegExp.$1;
+    if (i.match(/^#(.*)/)) {
+      // a line starting with # is a comment
+      const newComment = document.createComment(RegExp.lastParen);
+      document.body.appendChild(newComment); //insert as HTML comment
+    } else if (i.match(/{(.*)}/)) {
+      if (
+        RegExp.lastParen.match(/^t:(.*)/i) ||
+        RegExp.lastParen.match(/^title:(.*)/i)
+      ) {
+        document.querySelector("#song_title").textContent = RegExp.lastParen; //title
+        //document.querySelector("#html_title").textContent = RegExp.lastParen;
+      } else if (
+        RegExp.lastParen.match(/^subtitle:(.*)/i) ||
+        RegExp.lastParen.match(/^st:(.*)/i)
+      ) {
+        //subtitle
 
-		song_title = String(f.match(/{t:.*}/gi));
-		f = f.replace(/{t:.*}/gi,"");
-		song_title = song_title.replace(/^{t:/gi,"");
-		song_title = song_title.replace(/}$/,"");
-	} else {
-		// no title found
-		song_title = "Unnamed Song";
-	}
-	*/
+        document.querySelector("#subtitle").textContent = RegExp.lastParen;
+      } else if (
+        RegExp.lastParen.match(/^start_of_chorus/i) ||
+        RegExp.lastParen.match(/^soc/i)
+      ) {
+        // start_of_chorus
+        mode |= 1;
+      } else if (
+        RegExp.lastParen.match(/^end_of_chorus/i) ||
+        RegExp.lastParen.match(/^eoc/i)
+      ) {
+        // end_of_chorus
+        mode &= ~1;
+      } else if (
+        RegExp.lastParen.match(/^comment:(.*)/i) ||
+        RegExp.lastParen.match(/^c:(.*)/i)
+      ) {
+        // comment
+        const newParagraph = document.createElement("p");
+        newParagraph.setAttribute("class", "comment");
+        const newComment = document.createTextNode(RegExp.lastParen);
+        newParagraph.appendChild(newComment);
+        document.body.appendChild(newParagraph);
+      } else if (
+        RegExp.lastParen.match(/^comment_italic:(.*)/i) ||
+        RegExp.lastParen.match(/^ci:(.*)/i)
+      ) {
+        // comment_italic
+        const newParagraph = document.createElement("p");
+        newParagraph.setAttribute("class", "comment_italic");
+        const newComment = document.createTextNode(RegExp.lastParen);
+        newParagraph.appendChild(newComment);
+        document.body.appendChild(newParagraph);
+      } else if (
+        RegExp.lastParen.match(/^comment_box:(.*)/i) ||
+        RegExp.lastParen.match(/^cb:(.*)/i)
+      ) {
+        // comment_box
+        const newParagraph = document.createElement("p");
+        newParagraph.setAttribute("class", "comment_box");
+        const newComment = document.createTextNode(RegExp.lastParen);
+        newParagraph.appendChild(newComment);
+        document.body.appendChild(newParagraph);
+      } else if (
+        RegExp.lastParen.match(/^start_of_tab/i) ||
+        RegExp.lastParen.match(/^sot/i)
+      ) {
+        // start_of_tab
+        mode |= 2;
+      } else if (
+        RegExp.lastParen.match(/^end_of_tab/i) ||
+        RegExp.lastParen.match(/^eot/i)
+      ) {
+        // end_of_tab
+        mode &= ~2;
+      } else {
+        const newComment = document.createComment(
+          "Unsupported Command RegExp.lastParen"
+        );
+        document.body.appendChild(newComment);
+      } /*else { // this is a line with chords and lyrics
+          my(@chords,@lyrics);
+          @chords=("");
+          @lyrics=();
+          s/\s/\&nbsp;/g;					// replace spaces with hard spaces
+          while(s/(.*?)\[(.*?)\]//) {
+            push(@lyrics,$1);
+            push(@chords,$2	eq '\'|' ? '|' : $2);
+          }
+          push(@lyrics,$_);				# rest of line (after last chord) into @lyrics
+    
+          if($lyrics[0] eq "") {			# line began with a chord
+            shift(@chords);				# remove first item
+            shift(@lyrics);				# (they	are both empty)
+          }
+    
+          if(@lyrics==0) {	# empty	line?
+            print "<BR>\n";
+          } elsif(@lyrics==1 && $chords[0] eq "")	{	# line without chords
+            print "<DIV class=\"$lClasses[$mode]\">$lyrics[0]</DIV>\n";
+          } else {
+            print "<TABLE cellpadding=0 cellspacing=0>";
+            print "<TR>\n";
+            my($i);
+            for($i = 0; $i < @chords; $i++) {
+              print "<TD class=\"$cClasses[$mode]\">$chords[$i]</TD>";
+            }
+            print "</TR>\n<TR>\n";
+            for($i = 0; $i < @lyrics; $i++) {
+              print "<TD class=\"$lClasses[$mode]\">$lyrics[$i]</TD>";
+            }
+            print "</TR></TABLE>\n";
+          }
+        }*/
+      //document.querySelector("#file-contents").append("<!--Unsupported command:	$_-->\n");
+    }
 
-while( f != '') {
-
-	f = f.replace(/^(.*)\n?/,"");   // extract and remove first line
-
-	if(RegExp.$1.match(/#.*/)) {                                 // a line starting with # is a comment
-
-		f = RegExp.$1.replace(/^#(.*)/,"<!-- RegExp.lastParen -->\n");         //insert as HTML comment
-	}
-    let Command = /{(.*)}/;
-		if (Command.test(f)){
-
-			
-	  	if( RegExp.lastParen.match(/^t:(.*)/i)  || RegExp.lastParen.match(/^title:(.*)/i)  ) {  
-			   document.querySelector("#song_title").textContent = RegExp.lastParen; 
-				 document.querySelector("#html_title").textContent = RegExp.lastParen;    
-			
-			}
-			else if (RegExp.lastParen.match(/^subtitle:(.*)/i) || RegExp.lastParen.match(/^st:(.*)/i)){
-				document.querySelector("#subtitle").textContent = RegExp.lastParen;
-			}
-
-		}
-
-	//document.querySelector("#file-contents").textContent = f;
-
-
-
-
-
-//}
-	//document.querySelector("#song_title").textContent = song_title;
-	//document.querySelector("#html_title").textContent = song_title;
-
+    //document.querySelector("#file-contents").textContent = f;
+    //document.querySelector("#song_title").textContent = song_title;
+    //document.querySelector("#html_title").textContent = song_title;
+  }
 }
-}
+/*const newParagraph = document.body.createElement("p");
+  //newParagraph.setAttribute("class", "comment");
+  const newComment = document.createTextNode("Hallo du da");
+  newParagraph.appendChild(newComment);
+  const id = document.getElementById("xyz");
+  document.body.insertBefore(newParagraph, id); 
+  */
