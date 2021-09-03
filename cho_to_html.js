@@ -11,10 +11,9 @@ document.querySelector("#read-button").addEventListener("click", function () {
 
   reader.readAsText(file);
 });
-
+//main function
 function chopro2html(f) {
   //read title
-  //let song_title
 
   f = f.replace(/</, "&lt;"); // replace < with &lt;
   f = f.replace(/>/, "&gt;"); // replace > with &gt;
@@ -62,8 +61,9 @@ function chopro2html(f) {
       ) {
         // comment
         const newParagraph = document.createElement("p");
-        newParagraph.setAttribute("class", "comment");
         const newComment = document.createTextNode(RegExp.lastParen);
+
+        newParagraph.setAttribute("class", "comment");
         newParagraph.appendChild(newComment);
         document.body.appendChild(newParagraph);
       } else if (
@@ -72,8 +72,9 @@ function chopro2html(f) {
       ) {
         // comment_italic
         const newParagraph = document.createElement("p");
-        newParagraph.setAttribute("class", "comment_italic");
         const newComment = document.createTextNode(RegExp.lastParen);
+
+        newParagraph.setAttribute("class", "comment_italic");
         newParagraph.appendChild(newComment);
         document.body.appendChild(newParagraph);
       } else if (
@@ -82,8 +83,9 @@ function chopro2html(f) {
       ) {
         // comment_box
         const newParagraph = document.createElement("p");
-        newParagraph.setAttribute("class", "comment_box");
         const newComment = document.createTextNode(RegExp.lastParen);
+
+        newParagraph.setAttribute("class", "comment_box");
         newParagraph.appendChild(newComment);
         document.body.appendChild(newParagraph);
       } else if (
@@ -103,20 +105,29 @@ function chopro2html(f) {
           "Unsupported Command RegExp.lastParen"
         );
         document.body.appendChild(newComment);
-      } /*else { // this is a line with chords and lyrics
-          my(@chords,@lyrics);
-          @chords=("");
-          @lyrics=();
-          s/\s/\&nbsp;/g;					// replace spaces with hard spaces
-          while(s/(.*?)\[(.*?)\]//) {
-            push(@lyrics,$1);
-            push(@chords,$2	eq '\'|' ? '|' : $2);
-          }
-          push(@lyrics,$_);				# rest of line (after last chord) into @lyrics
+      }
+    } else {
+      // this is a line with chords and lyrics
+      let chords = [];
+      let lyrics = [];
+      i = i.replace(/\s/, "\xa0"); // replace spaces with hard spaces
+      while (i.match(/(.*?)\[(.*?)\]/)) {
+        lyrics.push(RegExp.$1);
+        chords.push(RegExp.$2);
+        i = i.replace(/(?:.*?)\[(?:.*?)\]/, "");
+      }
+      const newParagraph = document.createElement("p");
+      const newComment = document.createTextNode(lyrics, chords);
+
+      newParagraph.setAttribute("class", "content");
+      newParagraph.appendChild(newComment);
+      document.body.appendChild(newParagraph);
+      /*
+          lyrics.push($_);				// rest of line (after last chord) into @lyrics
     
-          if($lyrics[0] eq "") {			# line began with a chord
-            shift(@chords);				# remove first item
-            shift(@lyrics);				# (they	are both empty)
+          if($lyrics[0] eq "") {			// line began with a chord
+            shift(@chords);				// remove first item
+            shift(@lyrics);				// (they	are both empty)
           }
     
           if(@lyrics==0) {	# empty	line?
@@ -138,11 +149,11 @@ function chopro2html(f) {
           }
         }*/
       //document.querySelector("#file-contents").append("<!--Unsupported command:	$_-->\n");
-    }
 
-    //document.querySelector("#file-contents").textContent = f;
-    //document.querySelector("#song_title").textContent = song_title;
-    //document.querySelector("#html_title").textContent = song_title;
+      //document.querySelector("#file-contents").textContent = f;
+      //document.querySelector("#song_title").textContent = song_title;
+      //document.querySelector("#html_title").textContent = song_title;
+    }
   }
 }
 /*const newParagraph = document.body.createElement("p");
