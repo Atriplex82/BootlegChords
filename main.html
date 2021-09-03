@@ -1,30 +1,13 @@
 <!DOCTYPE html>
-<style type="text/css">
-  H1 {
-  font-family: "Arial", Helvetica;
-  font-size: 24pt;
-  }
-  H2 {
-  font-family: "Arial", Helvetica;
-  font-size: 16pt;
-  }
-  .lyrics, .lyrics_chorus { font-size 12pt; }
-  .lyrics_tab, .lyrics_chorus_tab { font-family: "Courier New", Courier; font-size 10pt; }
-  .lyrics_chorus, .lyrics_chorus_tab, .chords_chorus, .chords_chorus_tab { font-weight: bold; }
-  .chords, .chords_chorus, .chords_tab, .chords_chorus_tab { font-size: 10pt; color: blue; padding-right: 4pt;}
-
-  .comment, .comment_italic, .comment_box { background-color: #ffbbaa; }
-  .comment_italic { font-style: italic; }
-  .comment_box { border: solid; }
-</style>
 
 <head>
+  <link rel="stylesheet" href="stylesheet.css" />
   <title id="html_title"></title>
   <meta charset="utf-8" />
   <input type="file" id="file-input" />
   <button id="read-button">Read File</button>
-  <h1 id="song_title"></h1>
-  <h2 id="subtitle"></h2>
+  <h1 class="center" id="song_title"></h1>
+  <h2 class="center" id="subtitle"></h2>
   <pre id="file-contents"></pre>
   <script src="cho_to_html.js"></script>
 </head>
