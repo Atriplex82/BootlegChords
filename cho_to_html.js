@@ -14,10 +14,10 @@ document.querySelector("#read-button").addEventListener("click", function () {
 //main function
 function chopro2html(f) {
   //read title
-
-  f = f.replace(/</, "&lt;"); // replace < with &lt;
-  f = f.replace(/>/, "&gt;"); // replace > with &gt;
-  f = f.replace(/&/, "&amp;"); //replace & with &amp;
+  f = f.replaceAll(/\r/g, ""); // replace windows-style line ending with unix-style line ending
+  // f = f.replaceAll(/</g, "&lt;"); // replace < with &lt;
+  //f = f.replaceAll(/>/g, "&gt;"); // replace > with &gt;
+  // f = f.replaceAll(/&/g, "&amp;"); //replace & with &amp;
 
   let i,
     mode = 0;
