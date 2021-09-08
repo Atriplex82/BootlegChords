@@ -111,43 +111,43 @@ function chopro2html(f) {
       let chords = [];
       let lyrics = [];
       i = i.replace(/\s/, "\xa0"); // replace spaces with hard spaces
+      chords.push("");
       while (i.match(/(.*?)\[(.*?)\]/)) {
         lyrics.push(RegExp.$1);
         chords.push(RegExp.$2);
         i = i.replace(/(?:.*?)\[(?:.*?)\]/, "");
       }
-      const newParagraph = document.createElement("p");
-      const newComment = document.createTextNode(lyrics, chords);
+      lyrics.push(i); // add rest of line
 
-      newParagraph.setAttribute("class", "content");
-      newParagraph.appendChild(newComment);
-      document.body.appendChild(newParagraph);
-      /*
-          lyrics.push($_);				// rest of line (after last chord) into @lyrics
-    
-          if($lyrics[0] eq "") {			// line began with a chord
-            shift(@chords);				// remove first item
-            shift(@lyrics);				// (they	are both empty)
-          }
-    
-          if(@lyrics==0) {	# empty	line?
-            print "<BR>\n";
-          } elsif(@lyrics==1 && $chords[0] eq "")	{	# line without chords
-            print "<DIV class=\"$lClasses[$mode]\">$lyrics[0]</DIV>\n";
-          } else {
-            print "<TABLE cellpadding=0 cellspacing=0>";
-            print "<TR>\n";
-            my($i);
-            for($i = 0; $i < @chords; $i++) {
-              print "<TD class=\"$cClasses[$mode]\">$chords[$i]</TD>";
-            }
-            print "</TR>\n<TR>\n";
-            for($i = 0; $i < @lyrics; $i++) {
-              print "<TD class=\"$lClasses[$mode]\">$lyrics[$i]</TD>";
-            }
-            print "</TR></TABLE>\n";
-          }
-        }*/
+      const newTable = document.createElement("table");
+      const newLyricTableRow = document.createElement("tr");
+
+      const newChordTableRow = document.createElement("tr");
+      let n = 0;
+      for (let j of lyrics) {
+        if (chords[n] === undefined) {
+          chords[n] = "";
+        }
+        const newChordCell = document.createElement("td");
+
+        const newChords = document.createTextNode(chords[n]);
+        const newLyricCell = document.createElement("td");
+        const newLyrics = document.createTextNode(j);
+        newChordCell.appendChild(newChords);
+
+        newChordTableRow.appendChild(newChordCell);
+
+        newLyricCell.appendChild(newLyrics);
+
+        newLyricTableRow.appendChild(newLyricCell);
+        n++;
+      }
+
+      newTable.appendChild(newChordTableRow);
+      newTable.appendChild(newLyricTableRow);
+
+      document.body.appendChild(newTable);
+
       //document.querySelector("#file-contents").append("<!--Unsupported command:	$_-->\n");
 
       //document.querySelector("#file-contents").textContent = f;
@@ -156,10 +156,3 @@ function chopro2html(f) {
     }
   }
 }
-/*const newParagraph = document.body.createElement("p");
-  //newParagraph.setAttribute("class", "comment");
-  const newComment = document.createTextNode("Hallo du da");
-  newParagraph.appendChild(newComment);
-  const id = document.getElementById("xyz");
-  document.body.insertBefore(newParagraph, id); 
-  */
