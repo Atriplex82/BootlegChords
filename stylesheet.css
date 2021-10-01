@@ -1,3 +1,11 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-width: 1000px;
+  min-height: 1000px;
+  columns: auto;
+}
 
 .center {
   text-align: center;
@@ -5,24 +13,66 @@
   width: 50%;
   padding: 10px;
 }
-  H1 {
-  font-family: "Arial", Helvetica;
+
+H1 {
+  font-family: "Arial", "Helvetica";
   font-size: 24pt;
-  
-  }
-  H2 {
-  font-family: "Arial", Helvetica;
+}
+H2 {
+  font-family: "Arial", "Helvetica";
   font-size: 16pt;
-  }
-  .lyrics, .lyrics_chorus { font-size 12pt; }
-  .lyrics_tab, .lyrics_chorus_tab { font-family: "Courier New", Courier; font-size 10pt; }
-  .lyrics_chorus, .lyrics_chorus_tab, .chords_chorus, .chords_chorus_tab { font-weight: bold; }
-  .chords, .chords_chorus, .chords_tab, .chords_chorus_tab { font-size: 10pt; color: blue; padding-right: 4pt;}
+}
 
-  .comment, .comment_italic, .comment_box { background-color: grey ; }
-  .comment_italic { font-style: italic; }
-  .comment_box { border: solid; }
+.lyrics,
+.lyrics_chorus {
+  font-family: "Arial", "Helvetica";
+  /*font-size: 10pt;*/
+  color: black;
+}
 
-  .comment:hover{
-    background-color: black;
-  }
+.lyrics_tab,
+.lyrics_chorus_tab {
+  font-family: "Arial", "Helvetica";
+  /*font-size: 10pt;*/
+}
+.lyrics_chorus,
+.lyrics_chorus_tab,
+.chords_chorus,
+.chords_chorus_tab {
+  font-weight: bold;
+}
+
+.chords,
+.chords_chorus,
+.chords_tab,
+.chords_chorus_tab {
+  font-family: "Arial", "Helvetica";
+  /*font-size: 10pt;*/
+  color: black;
+  padding-right: 4pt;
+  font-weight: bold;
+}
+
+.comment,
+.comment_italic,
+.comment_box {
+  font-family: "Arial", "Helvetica";
+  background-color: rgb(150, 150, 150);
+}
+
+.comment_italic {
+  font-family: "Arial", "Helvetica";
+  font-style: italic;
+}
+
+.comment_box {
+  font-family: "Arial", "Helvetica";
+  border: solid;
+}
+.table {
+  margin-left: auto;
+  margin-right: auto;
+}
+table {
+  /*border-collapse: collapse;*/
+}
