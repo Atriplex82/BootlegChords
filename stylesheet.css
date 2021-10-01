@@ -58,6 +58,7 @@ H2 {
 .comment_box {
   font-family: "Arial", "Helvetica";
   background-color: rgb(150, 150, 150);
+  text-align: center;
 }
 
 .comment_italic {
