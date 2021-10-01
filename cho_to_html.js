@@ -22,7 +22,7 @@ function chopro2html(f) {
   let i,
     mode = 0;
 
-  while (f != "") {
+  while (f !== "") {
     f = f.replace(/^(.*)\n?/, ""); // extract and remove first line
     i = RegExp.$1;
     if (i.match(/^#(.*)/)) {
@@ -147,6 +147,7 @@ function chopro2html(f) {
 
       newTable.appendChild(newChordTableRow);
       newTable.appendChild(newLyricTableRow);
+      newTable.setAttribute("class", "table");
 
       document.querySelector("#songtext").appendChild(newTable);
 
