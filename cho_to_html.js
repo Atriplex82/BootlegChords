@@ -1,19 +1,19 @@
 //read file
+
 document.querySelector("#read-button").addEventListener("click", function () {
+  document.querySelector("#songtext").replaceChildren("");
   let file = document.querySelector("#file-input").files[0];
   let reader = new FileReader();
   reader.addEventListener("load", function (e) {
     let text = e.target.result;
     chopro2html(text);
-    //document.querySelector("#test").textContent = String(text);
-    //document.body.insertAdjacentHTML("beforeend",text);
   });
 
   reader.readAsText(file);
 });
+
 //main function
 function chopro2html(f) {
-  //read title
   f = f.replaceAll(/\r/g, ""); // replace windows-style line ending with unix-style line ending
   // f = f.replaceAll(/</g, "&lt;"); // replace < with &lt;
   //f = f.replaceAll(/>/g, "&gt;"); // replace > with &gt;
@@ -28,7 +28,7 @@ function chopro2html(f) {
     if (i.match(/^#(.*)/)) {
       // a line starting with # is a comment
       const newComment = document.createComment(RegExp.lastParen);
-      document.body.appendChild(newComment); //insert as HTML comment
+      document.querySelector("#songtext").appendChild(newComment); //insert as HTML comment
     } else if (i.match(/{(.*)}/)) {
       if (
         RegExp.lastParen.match(/^t:(.*)/i) ||
@@ -65,7 +65,7 @@ function chopro2html(f) {
 
         newParagraph.setAttribute("class", "comment");
         newParagraph.appendChild(newComment);
-        document.body.appendChild(newParagraph);
+        document.querySelector("#songtext").appendChild(newParagraph);
       } else if (
         RegExp.lastParen.match(/^comment_italic:(.*)/i) ||
         RegExp.lastParen.match(/^ci:(.*)/i)
@@ -76,7 +76,7 @@ function chopro2html(f) {
 
         newParagraph.setAttribute("class", "comment_italic");
         newParagraph.appendChild(newComment);
-        document.body.appendChild(newParagraph);
+        document.querySelector("#songtext").appendChild(newParagraph);
       } else if (
         RegExp.lastParen.match(/^comment_box:(.*)/i) ||
         RegExp.lastParen.match(/^cb:(.*)/i)
@@ -87,7 +87,7 @@ function chopro2html(f) {
 
         newParagraph.setAttribute("class", "comment_box");
         newParagraph.appendChild(newComment);
-        document.body.appendChild(newParagraph);
+        document.querySelector("#songtext").appendChild(newParagraph);
       } else if (
         RegExp.lastParen.match(/^start_of_tab/i) ||
         RegExp.lastParen.match(/^sot/i)
@@ -104,7 +104,7 @@ function chopro2html(f) {
         const newComment = document.createComment(
           "Unsupported Command RegExp.lastParen"
         );
-        document.body.appendChild(newComment);
+        document.querySelector("#songtext").appendChild(newComment);
       }
     } else {
       // this is a line with chords and lyrics
@@ -141,12 +141,14 @@ function chopro2html(f) {
 
         newLyricTableRow.appendChild(newLyricCell);
         n++;
+        newChordTableRow.setAttribute("class", "chords");
+        newLyricTableRow.setAttribute("class", "lyrics");
       }
 
       newTable.appendChild(newChordTableRow);
       newTable.appendChild(newLyricTableRow);
 
-      document.body.appendChild(newTable);
+      document.querySelector("#songtext").appendChild(newTable);
 
       //document.querySelector("#file-contents").append("<!--Unsupported command:	$_-->\n");
 
