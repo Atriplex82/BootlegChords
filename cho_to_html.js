@@ -15,16 +15,16 @@ document.querySelector("#read-button").addEventListener("click", function () {
 //main function
 function chopro2html(f) {
   f = f.replaceAll(/\r/g, ""); // replace windows-style line ending with unix-style line ending
-  // f = f.replaceAll(/</g, "&lt;"); // replace < with &lt;
+  //f = f.replace(/\s/, "\xa0"); // replace spaces with hard spaces
   //f = f.replaceAll(/>/g, "&gt;"); // replace > with &gt;
   // f = f.replaceAll(/&/g, "&amp;"); //replace & with &amp;
 
-  let i,
-    mode = 0;
+  let mode = 0,
+    columns = 1;
 
   while (f !== "") {
     f = f.replace(/^(.*)\n?/, ""); // extract and remove first line
-    i = RegExp.$1;
+    let i = RegExp.$1;
     if (i.match(/^#(.*)/)) {
       // a line starting with # is a comment
       const newComment = document.createComment(RegExp.lastParen);
@@ -100,17 +100,18 @@ function chopro2html(f) {
       ) {
         // end_of_tab
         mode &= ~2;
+      } else if (RegExp.lastParen.match(/^columns:(.*)/i)) {
+        columns = RegExp.lastParen;
       } else {
-        const newComment = document.createComment(
-          "Unsupported Command RegExp.lastParen"
-        );
+        const error = "Unsupported Command: " + RegExp.lastParen;
+        const newComment = document.createComment(error);
         document.querySelector("#songtext").appendChild(newComment);
       }
     } else {
       // this is a line with chords and lyrics
       let chords = [];
       let lyrics = [];
-      i = i.replace(/\s/, "\xa0"); // replace spaces with hard spaces
+      i = i.replaceAll(/\s/g, "\xa0");
       chords.push("");
       while (i.match(/(.*?)\[(.*?)\]/)) {
         lyrics.push(RegExp.$1);
@@ -121,7 +122,6 @@ function chopro2html(f) {
 
       const newTable = document.createElement("table");
       const newLyricTableRow = document.createElement("tr");
-
       const newChordTableRow = document.createElement("tr");
       let n = 0;
       for (let j of lyrics) {
@@ -141,8 +141,16 @@ function chopro2html(f) {
 
         newLyricTableRow.appendChild(newLyricCell);
         n++;
-        newChordTableRow.setAttribute("class", "chords");
-        newLyricTableRow.setAttribute("class", "lyrics");
+        if (mode === 0) {
+          newChordTableRow.setAttribute("class", "chords");
+          newLyricTableRow.setAttribute("class", "lyrics");
+        } else if (mode === 1) {
+          newChordTableRow.setAttribute("class", "chords chords_chorus");
+          newLyricTableRow.setAttribute("class", "lyrics lyrics_chorus");
+        } else if (mode === 2) {
+          newChordTableRow.setAttribute("class", "chords chords_tab");
+          newLyricTableRow.setAttribute("class", "lyrics lyrics_tab");
+        }
       }
 
       newTable.appendChild(newChordTableRow);
@@ -150,7 +158,7 @@ function chopro2html(f) {
       newTable.setAttribute("class", "table");
 
       document.querySelector("#songtext").appendChild(newTable);
-
+      document.querySelector("#songtext").style.columns = columns;
       //document.querySelector("#file-contents").append("<!--Unsupported command:	$_-->\n");
 
       //document.querySelector("#file-contents").textContent = f;
