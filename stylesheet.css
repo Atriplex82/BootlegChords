@@ -33,6 +33,7 @@ H2 {
 .lyrics_tab,
 .lyrics_chorus_tab {
   font-family: "Arial", "Helvetica";
+  color: green;
   /*font-size: 10pt;*/
 }
 .lyrics_chorus,
@@ -40,6 +41,7 @@ H2 {
 .chords_chorus,
 .chords_chorus_tab {
   font-weight: bold;
+  color: red;
 }
 
 .chords,
@@ -73,7 +75,15 @@ H2 {
 .table {
   margin-left: auto;
   margin-right: auto;
+  border-collapse: collapse;
 }
-table {
-  /*border-collapse: collapse;*/
+table,
+th,
+td {
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 0px;
+  text-align: left;
 }
